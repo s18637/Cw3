@@ -18,9 +18,9 @@ namespace Cw3.Controllers
             _dbService = dbService;
         }
         [HttpGet]
-        public string GetStudent(string orderBy)
+        public IActionResult GetStudents(string orderBy)
         {
-            return $"Kowalski, Malewski, Andrzejewski sortowanie={orderBy}";
+            return Ok(_dbService.GetStudents());
         }
         [HttpGet("{id}")]
         public IActionResult GetStudent(int id)
