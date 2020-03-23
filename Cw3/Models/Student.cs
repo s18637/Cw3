@@ -10,6 +10,7 @@ namespace Cw3.Models
         public int IdStudent { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public DateTime Bdate { get; set; }
         public string IndexNumber { get; set; }
     }
 }

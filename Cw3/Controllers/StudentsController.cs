@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Cw3.DAL;
 using Cw3.Models;
@@ -12,8 +13,8 @@ namespace Cw3.Controllers
     [Route("api/students")]
     public class StudentsController : ControllerBase
     {
-        private readonly IDbService _dbService;
-        public StudentsController(IDbService dbService)
+        private readonly IStudentsDb _dbService;
+        public StudentsController(IStudentsDb dbService)
         {
             _dbService = dbService;
         }
@@ -23,26 +24,23 @@ namespace Cw3.Controllers
             return Ok(_dbService.GetStudents());
         }
         [HttpGet("{id}")]
-        public IActionResult GetStudent(int id)
+        public IActionResult GetStudent(string id)
         {
-            if (id == 1)
-            {
-                return Ok("Kowalski");
-            } else if (id == 2)
-            {
-                return Ok("Nowak");
-            }
-
-            return NotFound("nie znaleziono studenta");
+            return Ok(_dbService.GetStudent(id));
         }
         [HttpPost]
         public IActionResult CreateStudent(Student student)
         {
-            //add to database
-            //generate index
-            student.IndexNumber = $"s{new Random().Next(1, 20000)}";
-            return Ok(student);
+            _dbService.AddStudent(student);
+            return StatusCode((int)HttpStatusCode.Created);
         }
+        [HttpGet("info/{id}")]
+        public IActionResult GetInfo(string id)
+        {
+            return Ok(_dbService.GetStudyInfo(id));
+        }
+
+
         [HttpPut("{id}")]
         public IActionResult UpdateStudent(string Name,int id)
         {
