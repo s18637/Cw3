@@ -56,7 +56,7 @@ namespace Cw3.DAL
 
         public IEnumerable<Student> GetStudents()
         {
-            List<Student> list = new List<Student>();
+            ICollection<Student> list = new List<Student>();
             using (var client = new SqlConnection(SqlCon))
             {
                 using (var command = new SqlCommand())
