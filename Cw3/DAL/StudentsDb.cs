@@ -1,5 +1,6 @@
 ﻿using Cw3.Helpers;
 using Cw3.Models;
+using Cw3.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -105,8 +106,18 @@ namespace Cw3.DAL
                                 command.CommandText = "INSERT INTO STUDENT VALUES(@index,@FirstName,@LastName,@BirthDate,@idE);";
                                 command.Parameters.AddWithValue("idE", idE);
                                 command.ExecuteNonQuery();
+                                command.CommandText = "select * from enrollment where idenrollment = (select idenrollment from Student where IndexNumber=@index and FirstName=@FirstName and LastName=@LastName and BirthDate=@BirthDate)";
+                                var dr2 = command.ExecuteReader();
+                                dr2.Read();
+                                EnrollmentResponse enrollment = new EnrollmentResponse();
+                                enrollment.Semester = int.Parse(dr2[1].ToString());
+                                enrollment.IdStudies = int.Parse(dr2[2].ToString());
+                                enrollment.DataRozpoczecia = DateTime.Parse(dr2[3].ToString());
+                                MyHelper response = new MyHelper("dodano studenta", 0);
+                                response.enrollment = enrollment;
+                                dr2.Close();
                                 transaction.Commit();
-                                return new MyHelper("dodano studenta", 0);
+                                return response;
                             }
                             catch (Exception exe)
                             {
@@ -160,7 +171,16 @@ namespace Cw3.DAL
                             com.Parameters.AddWithValue("Studies", se.Studies);
                             com.Parameters.AddWithValue("Semester", se.Semester);
                             com.ExecuteNonQuery();
-                            return new MyHelper("udzielono promocji", 0);
+                            command.CommandText = "select * from enrollment e join Studies st on e.IdStudy = st.IdStudy where e.Semester = (@Sem+1) and st.Name = @Stud";
+                            dr = command.ExecuteReader();
+                            dr.Read();
+                            EnrollmentResponse enrollment = new EnrollmentResponse();
+                            enrollment.Semester = int.Parse(dr[1].ToString());
+                            enrollment.IdStudies = int.Parse(dr[2].ToString());
+                            enrollment.DataRozpoczecia = DateTime.Parse(dr[3].ToString());
+                            MyHelper response = new MyHelper("udzielono promocji", 0);
+                            response.enrollment = enrollment;
+                            return response;
                         }
                     }
                     else

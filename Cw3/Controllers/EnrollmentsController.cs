@@ -25,7 +25,7 @@ namespace Cw3.Controllers
             MyHelper myHelper = _dbService.AddStudent(student);
             if (myHelper.value == 0)
             {
-                return StatusCode((int)HttpStatusCode.Created);
+                return StatusCode((int)HttpStatusCode.Created, myHelper.enrollment);
             }
             else
             {
@@ -38,7 +38,7 @@ namespace Cw3.Controllers
             MyHelper myHelper = _dbService.Promote(se);
             if (myHelper.value == 0)
             {
-                return StatusCode((int)HttpStatusCode.Created);
+                return StatusCode((int)HttpStatusCode.Created, myHelper.enrollment);
             }
             else
             {
