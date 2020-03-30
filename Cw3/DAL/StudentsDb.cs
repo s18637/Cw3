@@ -3,6 +3,7 @@ using Cw3.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,6 +28,7 @@ namespace Cw3.DAL
                         client.Open();
                         using (SqlTransaction transaction = client.BeginTransaction())
                         {
+                            command.Transaction = transaction;
                             string idStud="";
                             try
                             {
@@ -46,7 +48,7 @@ namespace Cw3.DAL
                             catch (SqlException exe)
                             {
                                 transaction.Rollback();
-                                return new MyHelper("wystapil blad podczas dodawania 1", -1);
+                                return new MyHelper("wystapil blad podczas przeszukiwania studiow", -1);
                             }
                             try
                             {
@@ -58,6 +60,7 @@ namespace Cw3.DAL
                             var dr = command.ExecuteReader();
                                 if (dr.Read())
                                 {
+                                    dr.Close();
                                     transaction.Rollback();
                                     return new MyHelper("podany student juz istnieje", -1);
                                 }
@@ -67,7 +70,7 @@ namespace Cw3.DAL
                             {
                             Console.WriteLine(exe);
                                 transaction.Rollback();
-                                return new MyHelper("wystapil blad podczas dodawania 2", -1);
+                                return new MyHelper("wystapil blad podczas przeszukiwania studentow", -1);
                             }
                             string idE = "";
                             try
@@ -95,7 +98,7 @@ namespace Cw3.DAL
                             catch (Exception exe)
                             {
                                 transaction.Rollback();
-                                return new MyHelper("wystapil blad podczas dodawania 3", -1);
+                                return new MyHelper("wystapil blad podczas przeszukiwania lub dodawania enrollment", -1);
                             }
                             try
                             {
@@ -108,7 +111,7 @@ namespace Cw3.DAL
                             catch (Exception exe)
                             {
                                 transaction.Rollback();
-                                return new MyHelper("wystapil blad podczas dodawania 4", -1);
+                                return new MyHelper("wystapil blad podczas dodawania studenta", -1);
                             }
                         }
                     }
@@ -129,8 +132,41 @@ namespace Cw3.DAL
 
             }
 
-            
-
+        }
+        public MyHelper Promote(StundetEnrollment se)
+        {
+            using (var client = new SqlConnection(SqlCon))
+            {
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = client;
+                    client.Open();
+                    if (se.Semester != null && se.Studies != null)
+                    {
+                        command.CommandText = "select*from enrollment e join Studies st on e.IdStudy = st.IdStudy where e.Semester=@Sem and st.Name=@Stud";
+                        command.Parameters.AddWithValue("Sem", se.Semester);
+                        command.Parameters.AddWithValue("Stud", se.Studies);
+                        var dr = command.ExecuteReader();
+                        if (!dr.Read())
+                        {
+                            return new MyHelper("nie ma takiego enrollment", -1);
+                        }
+                        dr.Close();
+                        using (var com = new SqlCommand(SqlCon))
+                        {
+                            com.Connection = client;
+                            com.CommandText = "pormote";
+                            com.CommandType = CommandType.StoredProcedure;
+                            com.Parameters.AddWithValue("Studies", se.Studies);
+                            com.Parameters.AddWithValue("Semester", se.Semester);
+                            com.ExecuteNonQuery();
+                            return new MyHelper("udzielono promocji", 0);
+                        }
+                    }
+                    else
+                        return new MyHelper("podano bledne dane", -1);
+                }
+            }
         }
 
      
@@ -195,9 +231,9 @@ namespace Cw3.DAL
                     client.Open();
                     var dr = command.ExecuteReader();
                     dr.Read();
-                    se.Semestr = int.Parse(dr["Semester"].ToString());
+                    se.Semester = int.Parse(dr["Semester"].ToString());
                     se.DataRozpoczecia = DateTime.Parse(dr["StartDate"].ToString());
-                    se.NazwaStudiow = dr["Name"].ToString();
+                    se.Studies = dr["Name"].ToString();
                 }
             }
             return se;

@@ -7,8 +7,8 @@ namespace Cw3.Models
 {
     public class StundetEnrollment
     {
-        public int Semestr { get; set; }
-        public string NazwaStudiow { get; set; }
+        public int Semester { get; set; }
+        public string Studies { get; set; }
         public DateTime DataRozpoczecia { get; set; }
     }
 }

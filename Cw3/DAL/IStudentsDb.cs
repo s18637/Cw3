@@ -14,6 +14,7 @@ namespace Cw3.DAL
         public MyHelper AddStudent(Student student);
         public StundetEnrollment GetStudyInfo(string id);
         public Student GetStudent(string id);
+        public MyHelper Promote(StundetEnrollment se);
 
     }
 }

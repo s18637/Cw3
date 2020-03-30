@@ -32,5 +32,18 @@ namespace Cw3.Controllers
                 return NotFound(myHelper.message);
             }
         }
+        [HttpPost("promotions")]
+        public IActionResult poromote(StundetEnrollment se)
+        {
+            MyHelper myHelper = _dbService.Promote(se);
+            if (myHelper.value == 0)
+            {
+                return StatusCode((int)HttpStatusCode.Created);
+            }
+            else
+            {
+                return NotFound(myHelper.message);
+            }
+        }
     }
 }
