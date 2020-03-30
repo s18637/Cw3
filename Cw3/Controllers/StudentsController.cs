@@ -31,7 +31,7 @@ namespace Cw3.Controllers
         [HttpPost]
         public IActionResult CreateStudent(Student student)
         {
-            _dbService.AddStudent(student);
+            /*_dbService.AddStudent(student);*/
             return StatusCode((int)HttpStatusCode.Created);
         }
         [HttpGet("info/{id}")]

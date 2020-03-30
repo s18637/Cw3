@@ -1,4 +1,6 @@
-﻿using Cw3.Models;
+﻿using Cw3.Helpers;
+using Cw3.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace Cw3.DAL
     public interface IStudentsDb
     {
         public IEnumerable<Student> GetStudents();
-        public void AddStudent(Student student);
+        public MyHelper AddStudent(Student student);
         public StundetEnrollment GetStudyInfo(string id);
         public Student GetStudent(string id);
 

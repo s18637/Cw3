@@ -1,4 +1,6 @@
-﻿using Cw3.Models;
+﻿using Cw3.Helpers;
+using Cw3.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -10,13 +12,110 @@ namespace Cw3.DAL
     public class StudentsDb : IStudentsDb
     {
         string SqlCon = "Data Source=db-mssql;Initial Catalog=s18637;Integrated Security=True";
-        public void AddStudent(Student student)
+        public MyHelper AddStudent(Student student)
         {
             using (var client = new SqlConnection(SqlCon))
             {
                 using (var command = new SqlCommand())
                 {
                     command.Connection = client;
+                    if (student.FirstName != null && student.IndexNumber != null && student.LastName != null && student.Bdate != null && student.Studies != null)
+                    {
+                        Console.WriteLine(student.Studies);
+                        command.CommandText = "Select * from studies where name=@studies";
+                        command.Parameters.AddWithValue("studies", student.Studies);
+                        client.Open();
+                        using (SqlTransaction transaction = client.BeginTransaction())
+                        {
+                            string idStud="";
+                            try
+                            {
+                                idStud = "";
+                                var dr = command.ExecuteReader();
+                                if (!dr.Read())
+                                {
+                                    transaction.Rollback();
+                                    return new MyHelper("nie zlaeziono podanych studiow", -1);
+                                }
+                                else
+                                {
+                                    idStud = dr[0].ToString();
+                                }
+                            dr.Close();
+                            }
+                            catch (SqlException exe)
+                            {
+                                transaction.Rollback();
+                                return new MyHelper("wystapil blad podczas dodawania 1", -1);
+                            }
+                            try
+                            {
+                                command.CommandText = "Select * from student s join enrollment e on s.idenrollment = e.idenrollment join studies st on st.idstudy=e.idstudy where s.IndexNumber=@index and s.FirstName=@FirstName and s.LastName=@LastName and s.BirthDate=@BirthDate and st.name=@studies";
+                                command.Parameters.AddWithValue("index", student.IndexNumber);
+                                command.Parameters.AddWithValue("FirstName", student.FirstName);
+                                command.Parameters.AddWithValue("LastName", student.LastName);
+                                command.Parameters.AddWithValue("BirthDate", student.Bdate);
+                            var dr = command.ExecuteReader();
+                                if (dr.Read())
+                                {
+                                    transaction.Rollback();
+                                    return new MyHelper("podany student juz istnieje", -1);
+                                }
+                            dr.Close();
+                        }
+                            catch (SqlException exe)
+                            {
+                            Console.WriteLine(exe);
+                                transaction.Rollback();
+                                return new MyHelper("wystapil blad podczas dodawania 2", -1);
+                            }
+                            string idE = "";
+                            try
+                            {
+                                command.CommandText = "select e.idenrollment from enrollment e join studies st on st.idstudy = e.idstudy where st.name=@studies and e.semester=1";
+                                var dr = command.ExecuteReader();
+                                idE = "";
+                                if (dr.Read())
+                                {
+                                    idE = dr[0].ToString();
+                                }
+                                else
+                                {
+                                    command.CommandText = "insert into enrollment values((select max(idenrollment)+1 from enrollment),1, @idStudy, getDate())";
+                                    command.Parameters.AddWithValue("idStudy", idStud);
+                                    command.ExecuteNonQuery();
+                                    command.CommandText = "select max(idenrollment) from enrollment";
+                                    dr = command.ExecuteReader();
+                                    dr.Read();
+                                    idE = dr[0].ToString();
+
+                                }
+                            dr.Close();
+                        }
+                            catch (Exception exe)
+                            {
+                                transaction.Rollback();
+                                return new MyHelper("wystapil blad podczas dodawania 3", -1);
+                            }
+                            try
+                            {
+                                command.CommandText = "INSERT INTO STUDENT VALUES(@index,@FirstName,@LastName,@BirthDate,@idE);";
+                                command.Parameters.AddWithValue("idE", idE);
+                                command.ExecuteNonQuery();
+                                transaction.Commit();
+                                return new MyHelper("dodano studenta", 0);
+                            }
+                            catch (Exception exe)
+                            {
+                                transaction.Rollback();
+                                return new MyHelper("wystapil blad podczas dodawania 4", -1);
+                            }
+                        }
+                    }
+                    else
+                        return new MyHelper("podano bledne dane",-1);
+
+                    /*command.Connection = client;
                     command.CommandText = "INSERT INTO STUDENT VALUES(@index,@FirstName,@lastName,@BirthDate,@IdE);";
                     command.Parameters.AddWithValue("index", student.IndexNumber);
                     command.Parameters.AddWithValue("FirstName", student.FirstName);
@@ -25,12 +124,16 @@ namespace Cw3.DAL
                     command.Parameters.AddWithValue("IdE", 1);
 
                     client.Open();
-                    command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();*/
                 }
 
             }
 
+            
+
         }
+
+     
 
         public Student GetStudent(string id)
         {
