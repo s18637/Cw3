@@ -23,7 +23,7 @@ namespace Cw3.DAL
                     command.Connection = client;
                     if (student.FirstName != null && student.IndexNumber != null && student.LastName != null && student.Bdate != null && student.Studies != null)
                     {
-                        Console.WriteLine(student.Studies);
+                        /*Console.WriteLine(student.Studies);*/
                         command.CommandText = "Select * from studies where name=@studies";
                         command.Parameters.AddWithValue("studies", student.Studies);
                         client.Open();
