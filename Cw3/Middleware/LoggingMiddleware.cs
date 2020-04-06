@@ -31,7 +31,7 @@ namespace Cw3.Middleware
                 sw.WriteLine(logg);
                 sw.Close();
             }
-            
+            httpContext.Request.Body.Seek(0, SeekOrigin.Begin);
 
             await _next(httpContext); }
         }
