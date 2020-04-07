@@ -14,6 +14,7 @@ namespace Cw3.Middleware
         public LoggingMiddleware(RequestDelegate next) { _next = next; }
         public async Task InvokeAsync(HttpContext httpContext)
         {
+            httpContext.Request.EnableBuffering();
             string logg = httpContext.Request.Method + " ";
             logg += httpContext.Request.Path + " ";
             var bodyStream = string.Empty;
