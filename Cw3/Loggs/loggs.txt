@@ -16,3 +16,78 @@ POST /api/enrollments {
 	"BirthDate": "1998-09-02", 
 	"Studies": "IT" 
 } 
+GET /  
+GET /favicon.ico  
+POST /api/enrollments {
+	"IndexNumber": "s2234", 
+	"FirstName": "Andrzej", 
+	"LastName": "Mawski", 
+	"BirthDate": "1998-09-02", 
+	"Studies": "IT" 
+} 
+GET /  
+GET /favicon.ico  
+POST /api/enrollments {
+	"IndexNumber": "s2234", 
+	"FirstName": "Andrzej", 
+	"LastName": "Mawski", 
+	"BirthDate": "1998-09-02", 
+	"Studies": "IT" 
+} 
+GET /  
+GET /favicon.ico  
+POST /api/enrollments {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+GET /  
+GET /favicon.ico  
+GET /  
+GET /favicon.ico  
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+GET /api/enrollments/login  
+GET /favicon.ico  
+GET /api/enrollments/login  
+GET /favicon.ico  
+GET /  
+GET /favicon.ico  
+GET /  
+GET /favicon.ico  
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+GET /  
+GET /favicon.ico  
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+GET /favicon.ico  
+GET /  
+GET /favicon.ico  
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+GET /  
+GET /favicon.ico  
+POST /api/enrollments/login {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
+POST /api/enrollments {
+	"Login": "s1234"
+	"Haslo": "aaaaaaa"
+} 
