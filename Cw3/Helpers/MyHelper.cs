@@ -1,4 +1,5 @@
-﻿using Cw3.Responses;
+﻿using Cw3.Models;
+using Cw3.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Cw3.Helpers
 
         public string message { get; set; }
         public int value { get; set; }
-        public EnrollmentResponse enrollment { get; set; }
+        /*public EnrollmentResponse enrollment { get; set; }*/
+        public Enrollment enrollment { get; set; }
     }
 }

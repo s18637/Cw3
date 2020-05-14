@@ -11,10 +11,13 @@ namespace Cw3.DAL
     public interface IStudentsDb
     {
         public IEnumerable<Student> GetStudents();
-        public MyHelper AddStudent(Student student);
-        public StundetEnrollment GetStudyInfo(string id);
+        public MyHelper AddStudent(Student student, string studia);
+        public Enrollment GetStudyInfo(string id);
         public Student GetStudent(string id);
-        public MyHelper Promote(StundetEnrollment se);
+        public MyHelper Promote(Enrollment se);
+        public IEnumerable<Student> GetList();
+        public MyHelper UpdateStudent(Student student);
+        public MyHelper DeleteStudent(string id);
 
     }
 }

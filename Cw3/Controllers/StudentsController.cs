@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Cw3.DAL;
+using Cw3.Helpers;
 using Cw3.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,11 +29,16 @@ namespace Cw3.Controllers
         {
             return Ok(_dbService.GetStudent(id));
         }
-        [HttpPost]
-        public IActionResult CreateStudent(Student student)
+        [HttpPost("{studia}")]
+        public IActionResult CreateStudent(Student student, string studia)
         {
+            MyHelper helper = _dbService.AddStudent(student, studia);
             /*_dbService.AddStudent(student);*/
-            return StatusCode((int)HttpStatusCode.Created);
+            if (helper.value == 0)
+            {
+                return StatusCode((int)HttpStatusCode.Created, helper.enrollment);
+            }
+            return NotFound(helper.message);
         }
         [HttpGet("info/{id}")]
         public IActionResult GetInfo(string id)
@@ -40,31 +46,32 @@ namespace Cw3.Controllers
             return Ok(_dbService.GetStudyInfo(id));
         }
 
-
-        [HttpPut("{id}")]
-        public IActionResult UpdateStudent(string Name,int id)
+        [HttpGet("linq")]
+        public IActionResult GetList()
         {
-            //find student in database
-            //jesli istnieje update, jesli nie to nie znaleziono
-            if (id == 1)
+            return Ok(_dbService.GetList());
+        }
+
+
+        [HttpPut("update")]
+        public IActionResult UpdateStudent(Student student)
+        {
+            MyHelper help = _dbService.UpdateStudent(student);
+            if (help.value == -1)
             {
-                //zmiana imienia studenta
-                return Ok("Aktualizacja zakonczona");
+                return NotFound(help.message);
             }
-            return NotFound("nie znaleziono studneta o danym id");
+            return Ok(help.message);
         }
         [HttpDelete("{id}")]
-        public IActionResult DeleteStudent(int id)
+        public IActionResult DeleteStudent(string id)
         {
-            //find student in database
-            //jesli istnieje to usun, jesli nie to nie znaleziono
-            if (id == 1)
+            MyHelper helper = _dbService.DeleteStudent(id);
+            if (helper.value == -1)
             {
-                //usuniecie studenta z bazy
-                return Ok("Usunieto");
+                return NotFound(helper.message);
             }
-
-            return NotFound("nie znaleziono studneta o danym id");
+            return Ok(helper.message);
         }
 
 

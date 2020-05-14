@@ -225,29 +225,27 @@ namespace Cw3.Controllers
                     st.FirstName = dr["FirstName"].ToString();
                     st.LastName = dr["LastName"].ToString();
                     st.IndexNumber = dr["IndexNumber"].ToString();
-                    st.Bdate = DateTime.Parse(dr["BirthDate"].ToString());
+                    st.BirthDate = DateTime.Parse(dr["BirthDate"].ToString());
                 }
             }
             return st;
         }
 
-        [HttpPost]
+        [HttpPost("{studia}")]
         [Authorize(Roles = "employee")]
-        public IActionResult CreateStudent(Student student)
+        public IActionResult CreateStudent(Student student, string studia)
         {
-            MyHelper myHelper = _dbService.AddStudent(student);
-            if (myHelper.value == 0)
+            MyHelper helper = _dbService.AddStudent(student, studia);
+            /*_dbService.AddStudent(student);*/
+            if (helper.value == 0)
             {
-                return StatusCode((int)HttpStatusCode.Created, myHelper.enrollment);
+                return StatusCode((int)HttpStatusCode.Created, helper.enrollment);
             }
-            else
-            {
-                return NotFound(myHelper.message);
-            }
+            return NotFound(helper.message);
         }
         [HttpPost("promotions")]
         [Authorize(Roles = "employee")]
-        public IActionResult poromote(StundetEnrollment se)
+        public IActionResult poromote(Enrollment se)
         {
             MyHelper myHelper = _dbService.Promote(se);
             if (myHelper.value == 0)
